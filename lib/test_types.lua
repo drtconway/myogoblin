@@ -1,29 +1,29 @@
-require "types"
+local T = require "types"
 
 
 function test_nil_type()
     local x = nil
     local y = 1
-    assert(Nil(x))
-    assert(not Nil(y))
+    assert(T.Nil(x))
+    assert(not T.Nil(y))
 end
 
 function test_str_type()
     local x = nil
     local y = 1
     local z = "foo"
-    assert(not Str(x))
-    assert(not Str(y))
-    assert(Str(z))
+    assert(not T.Str(x))
+    assert(not T.Str(y))
+    assert(T.Str(z))
 end
 
 function test_num_type()
     local x = nil
     local y = 1
     local z = "foo"
-    assert(not Num(x))
-    assert(Num(y))
-    assert(not Num(z))
+    assert(not T.Num(x))
+    assert(T.Num(y))
+    assert(not T.Num(z))
 end
 
 function test_bool_type()
@@ -31,10 +31,10 @@ function test_bool_type()
     local y = 1
     local z = "foo"
     local w = true
-    assert(not Bool(x))
-    assert(not Bool(y))
-    assert(not Bool(z))
-    assert(Bool(w))
+    assert(not T.Bool(x))
+    assert(not T.Bool(y))
+    assert(not T.Bool(z))
+    assert(T.Bool(w))
 end
 
 function test_fun_type()
@@ -42,10 +42,10 @@ function test_fun_type()
     local y = 1
     local z = "foo"
     local w = function () return true end
-    assert(not Fun(x))
-    assert(not Fun(y))
-    assert(not Fun(z))
-    assert(Fun(w))
+    assert(not T.Fun(x))
+    assert(not T.Fun(y))
+    assert(not T.Fun(z))
+    assert(T.Fun(w))
 end
 
 function test_list_type()
@@ -54,11 +54,11 @@ function test_list_type()
     local z = { 'foo', 'bar', 'baz' }
     local w = { a = 'foo', b = 'bar', c = 'baz' }
     local v = { 23, 45, 56 }
-    assert(not List(Str)(x))
-    assert(not List(Str)(y))
-    assert(List(Str)(z))
-    assert(not List(Str)(w))
-    assert(not List(Str)(v))
+    assert(not T.List(T.Str)(x))
+    assert(not T.List(T.Str)(y))
+    assert(T.List(T.Str)(z))
+    assert(not T.List(T.Str)(w))
+    assert(not T.List(T.Str)(v))
 end
 
 function test_map_type()
@@ -67,27 +67,27 @@ function test_map_type()
     local z = { 'foo', 'bar', 'baz' }
     local w = { a = 'foo', b = 'bar', c = 'baz' }
     local v = { a = {'foo'}, b = {}, c = {'baz', 'qux'} }
-    assert(not Map(Str,Num)(x))
-    assert(not Map(Str,Num)(y))
-    assert(Map(Num,Str)(z))
-    assert(Map(Str,Str)(w))
-    assert(Map(Str,List(Str))(v))
+    assert(not T.Map(T.Str,T.Num)(x))
+    assert(not T.Map(T.Str,T.Num)(y))
+    assert(T.Map(T.Num,T.Str)(z))
+    assert(T.Map(T.Str,T.Str)(w))
+    assert(T.Map(T.Str,T.List(T.Str))(v))
 end
 
 function test_named_type()
     local b = {}
-    b["P"] = Str
-    b["Q"] = List(Str)
-    b["R"] = Map(Str,Named(b, "R"))
+    b["P"] = T.Str
+    b["Q"] = T.List(T.Str)
+    b["R"] = T.Map(T.Str,T.Named(b, "R"))
     local x = "foo"
-    assert(Named(b, "P")(x))
-    assert(not Named(b, "Q")(x))
+    assert(T.Named(b, "P")(x))
+    assert(not T.Named(b, "Q")(x))
     local y = {a = {b = {c = {}}}}
-    assert(Named(b, "R")(y))
+    assert(T.Named(b, "R")(y))
 end
 
 function test_or_type()
-    local t = Or(Str, Num)
+    local t = T.Or(T.Str, T.Num)
     local x = nil
     local y = 1
     local z = 'foo'
@@ -99,7 +99,7 @@ function test_or_type()
 end
 
 function test_tuple_type()
-    local t = Tuple(Str, Num, List(Bool))
+    local t = T.Tuple(T.Str, T.Num, T.List(T.Bool))
     local x = nil
     local y = 1
     local z = {'foo', 1, {true, true, false}}

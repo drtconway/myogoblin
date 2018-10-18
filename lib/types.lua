@@ -1,28 +1,30 @@
-Any = function(v)
+local types = {}
+
+function types.Any(v)
     return true
 end
 
-Nil = function(v)
+function types.Nil(v)
     return v == nil
 end
 
-Str = function(v)
+function types.Str(v)
     return type(v) == "string"
 end
 
-Num = function(v)
+function types.Num(v)
     return type(v) == "number"
 end
 
-Bool = function(v)
+function types.Bool(v)
     return type(v) == "boolean"
 end
 
-Fun = function(v)
+function types.Fun(v)
     return type(v) == "function"
 end
 
-List = function(t)
+function types.List(t)
     assert(type(t) == "function")
     return function(v)
         -- check it's a table
@@ -49,7 +51,7 @@ List = function(t)
     end
 end
 
-Map = function(t, u)
+function types.Map(t, u)
     assert(type(t) == "function")
     assert(type(u) == "function")
     return function(v)
@@ -67,7 +69,7 @@ Map = function(t, u)
     end
 end
 
-Named = function(b, n)
+function types.Named(b, n)
     return function(v)
         assert(type(b) == "table", "bindings must be a table")
         assert(type(n) == "string", "the type name must be a string")
@@ -76,7 +78,7 @@ Named = function(b, n)
     end
 end
 
-Or = function(...)
+function types.Or(...)
     local ts = {...}
     local n = #ts
     return function(v)
@@ -89,7 +91,7 @@ Or = function(...)
     end
 end
 
-Tuple = function(...)
+function types.Tuple(...)
     local ts = {...}
     local n = #ts
     return function(v)
@@ -113,3 +115,4 @@ Tuple = function(...)
     end
 end
 
+return types
