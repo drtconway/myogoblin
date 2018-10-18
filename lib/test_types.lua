@@ -110,6 +110,13 @@ function test_tuple_type()
     assert(not t(w))
 end
 
+function test_check_1()
+    local f = function(a, b) return a + b end
+    local g = T.check(f, T.Num, T.Num, T.Num)
+    local r = g(1, 2)
+    assert(r == 3)
+end
+
 test_nil_type()
 test_str_type()
 test_num_type()
@@ -120,4 +127,4 @@ test_map_type()
 test_named_type()
 test_or_type()
 test_tuple_type()
-
+test_check_1()

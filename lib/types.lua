@@ -115,4 +115,23 @@ function types.Tuple(...)
     end
 end
 
+function types.check(f, r, ...)
+    local ts = {...}
+    return function(...)
+        local us = {...}
+        assert(#ts >= #us, "function called with too many arguments")
+        for i = 1,#ts do
+            assert(ts[i](us[i]), "argument " .. i .. " is not well typed.")
+        end
+        local v = {f(...)}
+        -- unwrap singleton returns,
+        -- even though defaulty representations are evil.
+        if #v == 1 then
+            v = v[1]
+        end
+        assert(r(v), "return value is not well typed.")
+        return unpack(v)
+    end
+end
+
 return types
