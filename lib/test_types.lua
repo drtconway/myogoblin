@@ -117,6 +117,14 @@ function test_check_1()
     assert(r == 3)
 end
 
+function test_check_2()
+    local f = function(a, b) return a + b, a - b end
+    local g = T.check(f, T.Tuple(T.Num, T.Num), T.Num, T.Num)
+    local r,s = g(1, 2)
+    assert(r == 3)
+    assert(s == -1)
+end
+
 test_nil_type()
 test_str_type()
 test_num_type()
@@ -128,3 +136,4 @@ test_named_type()
 test_or_type()
 test_tuple_type()
 test_check_1()
+test_check_2()

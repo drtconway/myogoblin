@@ -128,9 +128,11 @@ function types.check(f, r, ...)
         -- even though defaulty representations are evil.
         if #v == 1 then
             v = v[1]
+            assert(r(v), "return value is not well typed.")
+            return v
         end
         assert(r(v), "return value is not well typed.")
-        return unpack(v)
+        return table.unpack(v)
     end
 end
 
