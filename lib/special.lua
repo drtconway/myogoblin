@@ -9,11 +9,11 @@ function special.erf(x)
     end
     local pi = 3.14159265359
     local a = (8*(pi - 3))/(3*pi*(4 - pi))
-    return s * sqrt(1.0 - exp(-x*x  * (4/pi + a*x*x) / (1 + a*x*x)))
+    return s * math.sqrt(1.0 - math.exp(-x*x  * (4/pi + a*x*x) / (1 + a*x*x)))
 end
 
 function special.gauss(x, mu, sig)
-    return 0.5 * (1 + special.erf((x - mu)/(sig*sqrt(2))))
+    return 0.5 * (1 + special.erf((x - mu)/(sig*math.sqrt(2))))
 end
 
 return special
