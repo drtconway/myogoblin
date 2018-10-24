@@ -12,4 +12,8 @@ function special.erf(x)
     return s * sqrt(1.0 - exp(-x*x  * (4/pi + a*x*x) / (1 + a*x*x)))
 end
 
+function special.gauss(x, mu, sig)
+    return 0.5 * (1 + special.erf((x - mu)/(sig*sqrt(2))))
+end
+
 return special
