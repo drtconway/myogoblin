@@ -1,0 +1,6 @@
+## Interface: 80000
+## Title: Dungeonarium
+## Notes: View what dungeons you've done and when.
+## Version: 1.0.0
+## SavedVariables: items
+main.lua
