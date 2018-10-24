@@ -1,4 +1,4 @@
-local events = {}
+events = {}
 
 function events:PLAYER_ENTERING_WORLD(...)
     local args = {...}
@@ -6,7 +6,10 @@ function events:PLAYER_ENTERING_WORLD(...)
     local when = date('%y%m%d%H%M%S')
     local inst = {IsInInstance()}
     local itm = {when = when, inst = inst, args = args}
-    local table.insert(items, itm)
+    if DungeonariumEvents == nil then
+        DungeonariumEvents = {}
+    end
+    local table.insert(DungeonariumEvents, itm)
 end
 
 function events:PLAYER_LEAVING_WORLD(...)
@@ -15,7 +18,10 @@ function events:PLAYER_LEAVING_WORLD(...)
     local when = date('%y%m%d%H%M%S')
     local inst = {IsInInstance()}
     local itm = {when = when, inst = inst, args = args}
-    local table.insert(items, itm)
+    if DungeonariumEvents == nil then
+        DungeonariumEvents = {}
+    end
+    local table.insert(DungeonariumEvents, itm)
 end
 
 local frame = CreateFrame('Frame')
