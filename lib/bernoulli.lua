@@ -12,7 +12,9 @@ function bernoulli.pvalue(vec)
         var = var + itm.p*(1 - itm.p)
         x = x + itm.v
     end
-    return special.pnorm(x, mu, math.sqrt(var))
+    local sig = math.sqrt(var)
+    local z = (x - mu)/sig
+    return special.pnorm(x, mu, sig), mu, sig, z
 end
 
 return bernoulli
