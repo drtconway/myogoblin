@@ -30,16 +30,30 @@ def trial2(N):
         vs.append(u - beta < p)
     return (ps, vs)
 
-B = {'True': True, 'False': False}
-
-for i in xrange(1000):
+if True:
     (ps, vs) = trial1(100)
-    x = sum(vs)
-    (mu, sig) = est(ps)
-    print 'null', mu, sig, x, pval(x, mu, sig)
-
-for i in xrange(1000):
+    print 'local good = {'
+    for (p,v) in zip(ps, vs):
+        print '    {p = %g, v = %d},' % (p, v)
+    print '}'
+    print
     (ps, vs) = trial2(100)
-    x = sum(vs)
-    (mu, sig) = est(ps)
-    print 'bad', mu, sig, x, pval(x, mu, sig)
+    print 'local bad = {'
+    for (p,v) in zip(ps, vs):
+        print '    {p = %g, v = %d},' % (p, v)
+    print '}'
+    print
+    print 'return {good, bad}'
+
+if False:
+    for i in xrange(1000):
+        (ps, vs) = trial1(100)
+        x = sum(vs)
+        (mu, sig) = est(ps)
+        print 'null', mu, sig, x, pval(x, mu, sig)
+
+    for i in xrange(1000):
+        (ps, vs) = trial2(100)
+        x = sum(vs)
+        (mu, sig) = est(ps)
+        print 'bad', mu, sig, x, pval(x, mu, sig)
