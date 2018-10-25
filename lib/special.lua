@@ -58,9 +58,23 @@ function special.pbinom(p, n, k)
     local r = n*l1mp
     for i = 1,k do
         local t = special.lchoose(n, i) + i*lp + (n-i)*l1mp
-        r = special.logAdd(r, t)
+        r = logAdd(r, t)
     end
     return math.exp(r)
+end
+
+function special.dpois(lam, k)
+    return math.exp((k*math.log(lam) - lam) - special.lfac(k))
+end
+
+function special.ppois(lam, k)
+    local llam = math.log(lam)
+    local r = 0.0
+    for i = 1,k do
+        local t = i*llam - special.lfac(i)
+        r = logAdd(r, t)
+    end
+    return math.exp(r - lam)
 end
 
 function special.erf(x)
