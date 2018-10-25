@@ -3,6 +3,29 @@ local special = {}
 local pi = 3.14159265358979323846264338327950288
 local logPi = math.log(pi)
 
+local min = function(a, b)
+    if a <= b then
+        return a
+    else
+        return b
+    end
+end
+
+local max = function(a, b)
+    if a >= b then
+        return a
+    else
+        return b
+    end
+end
+
+function logAdd(a, b)
+    local x = max(a, b)
+    local y = min(a, b)
+    local w = y - x
+    return x + math.log(1+math.exp(w))
+end
+
 local lfacSmall = {math.log(1), math.log(2), math.log(6), math.log(24), math.log(120),
                    math.log(720), math.log(5040), math.log(40320), math.log(362880), math.log(3628800)}
 function special.lfac(n)
@@ -22,6 +45,22 @@ function special.lchoose(n, k)
         return 0.0
     end
     return special.lfac(n) - (special.lfac(n - k) + special.lfac(k))
+end
+
+function special.dbinom(p, n, k)
+    local r = special.lchoose(n, k) + k*math.log(p) + (n-k)*math.log(1-p)
+    return math.exp(r)
+end
+
+function special.pbinom(p, n, k)
+    local lp = math.log(p)
+    local l1mp = math.log(1 - p)
+    local r = n*l1mp
+    for i = 1,k do
+        local t = special.lchoose(n, i) + i*lp + (n-i)*l1mp
+        r = special.logAdd(r, t)
+    end
+    return math.exp(r)
 end
 
 function special.erf(x)
