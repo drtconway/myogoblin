@@ -47,6 +47,20 @@ function special.lchoose(n, k)
     return special.lfac(n) - (special.lfac(n - k) + special.lfac(k))
 end
 
+function special.logGamma(z)
+    if z == 1 then
+        return 0.0
+    end
+    local z2 = z*z
+    local z3 = z2*z
+    local z5 = z3*z2
+    return z*math.log(z) - z - 0.5*math.log(z/(2*pi)) + 1.0/(12*z) + 1.0/(360*z3) + 1.0/(1260*z5)
+end
+
+function special.logBeta(a, b)
+    return special.logGamma(a) + special.logGamma(b) - special.logGamma(a + b)
+end
+
 function special.dbinom(p, n, k)
     local r = special.lchoose(n, k) + k*math.log(p) + (n-k)*math.log(1-p)
     return math.exp(r)
