@@ -61,6 +61,10 @@ function special.logBeta(a, b)
     return special.logGamma(a) + special.logGamma(b) - special.logGamma(a + b)
 end
 
+function special.ibetaDx(a, b, c)
+    return ((a - 1) x^(a - 2) (1 - x)^(b - 1) + (1 - b) x^(a - 1) (1 - x)^(b - 2))/beta(a, b)
+end
+
 function special.dbinom(p, n, k)
     local r = special.lchoose(n, k) + k*math.log(p) + (n-k)*math.log(1-p)
     return math.exp(r)
