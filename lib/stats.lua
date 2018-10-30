@@ -36,6 +36,38 @@ function minMax(a, b)
     end
 end
 
+function cont(aa, bb, n)
+    local r = 0
+    local i = n
+    while i > 0 do
+        local a = aa(i)
+        local b = bb(i)
+        r = b / (a + r)
+        i = i - 1
+    end
+    return aa(0) + r
+end
+
+function cont2(aa, bb, N)
+    local C = aa(0)
+    local D = 1 / aa(1)
+    local dC = bb(1)*D
+    local C = C + dC
+    local n = 1
+    while true do
+        n = n + 1
+        local ai = aa(n)
+        local bi = bb(n)
+        D = 1/(D*bi + ai)
+        dC = (ai*D - 1) * dC
+        C = C + dC
+        if abs(dC/C) < 1e-12 then
+            break
+        end
+    end
+    return C
+end
+
 function log1p(x)
     if abs(x) >= 1 then
         return math.log(1 + x)
