@@ -258,8 +258,50 @@ function lowerBeta(a, b, x)
         return lowerBetaLog(a, b, x)
     end
 end
-
 stats.lowerBeta = lowerBeta
+
+function erf(x)
+    if x < 0 then
+        return 1 - erf(-x)
+    end
+
+    local p = 0.3275911
+    local a = {0.254829592, -0.284496736, 1.421413741, -1.453152027, 1.061405429}
+
+    local t = 1.0 / (1.0 + p*x)
+    local ti = 1.0
+    local s = 0.0
+    for i = 1,5 do
+        ti = ti * t
+        s = s + a[i]*ti
+    end
+    return 1 - s*math.exp(-x*x)
+end
+stats.erf = erf
+
+function erfc(x)
+    if x < -0.5 then
+        return 2 - erfc(-x)
+    end
+    if x < 0 then
+        return 1 + erf(-x)
+    end
+    local c1 = -1.09500814703333
+    local c2 = -0.75651138383854
+    return math.exp(c1*x + c2*x*x)
+    -- local a = 2.7889
+    -- return exp(-x*x)*(a/((a-1)*sqrt(pi*x*x) + sqrt(pi*x*x+a*a)))
+end
+stats.erfc = erfc
+
+function logErfc(x)
+    if x < 0 then
+        return log1p(erf(-x))
+    end
+    local c1 = -1.09500814703333
+    local c2 = -0.75651138383854
+    return c1*x + c2*x*x
+end
 
 function binom(n, p)
     local q = 1.0 - p
@@ -519,6 +561,60 @@ stats.dbeta = function(x, a, b, log)
 end
 stats.pbeta = function(x, a, b, upper, log)
     return beta_(a, b).cdf(x, upper, log)
+end
+
+function norm(mu, sig)
+    local qtps2 = math.sqrt(2*pi*sig^2)
+    local lqtps2 = math.log(qtps2)
+    local sr2 = sig*math.sqrt(2)
+    local l2 = math.log(0.5)
+
+    local norm = {}
+
+    function norm.mean()
+        return mu
+    end
+
+    function norm.median()
+        return mu
+    end
+
+    function norm.var()
+        return sig^2
+    end
+
+    function norm.pdf(x, log)
+        local mzo2 = -(x - mu)^2 / (2*sig^2)
+        if log then
+            return mzo2 - lqtps2
+        else
+            return math.exp(mzo2) / qtps2
+        end
+    end
+
+    function norm.cdf(x, upper, log)
+        local z = (x - mu)/sr2
+        if log then
+            if upper then
+                return 0.5 * logErfc(z)
+            else
+                return 0.5 * logErfc(-z)
+            end
+        else
+            if upper then
+                return 0.5 * erfc(z)
+            else
+                return 0.5 * erfc(-z)
+            end
+        end
+    end
+end
+stats.norm = norm
+stats.dnorm = function(x, mu, sig, log)
+    return norm(mu, sig).pdf(x, log)
+end
+stats.pnorm = function(x, mu, sig, upper, log)
+    return norm(mu, sig).cdf(x, upper, log)
 end
 
 return stats
