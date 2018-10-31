@@ -36,7 +36,7 @@ function minMax(a, b)
     end
 end
 
-function cont(aa, bb, n)
+function cont1(aa, bb, n)
     local r = 0
     local i = n
     while i > 0 do
@@ -512,6 +512,13 @@ function beta_(a, b)
     end
 
     return beta_
+end
+stats.beta_ = beta_
+stats.dbeta = function(x, a, b, log)
+    return beta_(a, b).pdf(x, log)
+end
+stats.pbeta = function(x, a, b, upper, log)
+    return beta_(a, b).cdf(x, upper, log)
 end
 
 return stats
