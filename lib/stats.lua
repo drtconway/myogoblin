@@ -36,36 +36,36 @@ function minMax(a, b)
     end
 end
 
-function cont1(aa, bb, n)
-    local r = 0
-    local i = n
-    while i > 0 do
-        local a = aa(i)
-        local b = bb(i)
-        r = b / (a + r)
-        i = i - 1
-    end
-    return aa(0) + r
-end
-
-function cont2(aa, bb, N)
-    local C = aa(0)
-    local D = 1 / aa(1)
-    local dC = bb(1)*D
-    local C = C + dC
-    local n = 1
+function cont(aa, bb)
+    -- continued fraction notation is inconsistent
+    -- with some taking a_i to be numerators and b_i
+    -- denominators, and some the other way around.
+    -- The folloing assumes a_i to be numerator.
+    local dm = 1e-300
+    local a1 = aa(1)
+    local b1 = bb(1)
+    local f = aa(1)/bb(1)
+    C = a1/dm
+    D = 1/b1
+    n = 2
     while true do
+        local an = aa(n)
+        local bn = bb(n)
+
+        D = D * an + bn
+        if D == 0 then D = dm end
+
+        C = bn + an/C
+        if C == 0 then C = dm end
+
+        D = 1/D
+        local delta = C*D
+        f = f * delta
         n = n + 1
-        local ai = aa(n)
-        local bi = bb(n)
-        D = 1/(D*bi + ai)
-        dC = (ai*D - 1) * dC
-        C = C + dC
-        if abs(dC/C) < 1e-12 then
-            break
+        if abs(delta - 1) < 1e-12 then
+            return f
         end
     end
-    return C
 end
 
 function log1p(x)
@@ -205,6 +205,53 @@ function logLowerGamma(s, x)
     end
     return s*lx + lgs - x + w
 end
+stats.logLowerGamma = logLowerGamma
+
+function lowerGamma(s, x)
+    return math.exp(logLowerGamma(s, x))
+end
+stats.lowerGamma = lowerGamma
+
+function logUpperGammaInner(s, x)
+    local M
+    local N
+    if x == 0 then
+        M, N = 1, gamma(s)
+    end
+
+    local aa1 = function(n)
+        if n == 1 then
+            return 1
+        end
+        return -(n - 1)*(n - s - 1)
+    end
+    local aa2 = function(n) return aa1(n + 1) end
+
+    local bb1 = function(n)
+        return x + 2*n - 1 - s
+    end
+    local bb2 = function(n) return bb1(n + 1) end
+
+    if x == s - 1 then
+        M = aa1(1) / cont(aa2, bb2, s)
+    else
+        M = cont(aa1, bb1, s)
+    end
+    N = s*math.log(x) - x
+    return M, N
+end
+
+function logUpperGamma(s, x)
+    M, N = logUpperGammaInner(s, x)
+    return N + math.log(M)
+end
+stats.logUpperGamma = logUpperGamma
+
+function upperGamma(s, x)
+    M, N = logUpperGammaInner(s, x)
+    return M * math.exp(N)
+end
+stats.upperGamma = upperGamma
 
 function logBeta(a, b)
     return logGamma(a) + logGamma(b) - logGamma(a + b)
@@ -615,6 +662,58 @@ stats.dnorm = function(x, mu, sig, log)
 end
 stats.pnorm = function(x, mu, sig, upper, log)
     return norm(mu, sig).cdf(x, upper, log)
+end
+
+function chisq(k)
+    local l2 = math.log(2)
+    local lgko2 = logGamma(k/2)
+
+    local chisq = {}
+
+    function chisq.mean()
+        return k
+    end
+
+    function chisq.median()
+        return k * (1 - 2/(9*k))^3
+    end
+
+    function chisq.var()
+        return 2*k
+    end
+
+    function chisq.pdf(x, log)
+        local lx = math.log(x)
+        local lpdf = (k/2 - 1)*lx - x/2 - ((k/2)*l2 + lgko2)
+        if log then
+            return lpdf
+        else
+            return math.exp(lpdf)
+        end
+    end
+
+    function chisq.cdf(x, upper, log)
+        local lcdf
+        if upper then
+            lcdf = logUpperGamma(k/2, x/2) - lgko2
+        else
+            lcdf = logLowerGamma(k/2, x/2) - lgko2
+        end
+        if log then
+            return lcdf
+        else
+            return math.log(lcdf)
+        end
+    end
+
+    return chisq
+end
+stats.chisq = chisq
+stats.dchisq = function(k, x, log)
+    return chisq(k).pdf(x, log)
+end
+stats.pchisq = function(k, x, upper, log)
+    return chisq(k).cdf(x, upper, log)
 end
 
 return stats
