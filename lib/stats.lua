@@ -702,7 +702,7 @@ function chisq(k)
         if log then
             return lcdf
         else
-            return math.log(lcdf)
+            return math.exp(lcdf)
         end
     end
 
