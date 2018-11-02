@@ -295,6 +295,19 @@ function lowerBetaLog(a, b, x)
 end
 
 function lowerBeta(a, b, x)
+    function tx(n)
+        local y = 1 - x
+        local lx = math.log(x)
+        local p = lowerBeta(a + n, b, x)
+        local s = 0
+        for j = 1,n do
+            local lt = logGamma(a + b + j - 1) + (j - 1)*lx - (logGamma(b) + logGamma(a + j))
+            s = s + math.exp(lt)
+        end
+        local q = (x^a)*(y^b) * s
+        print(p, q)
+        return p + q
+    end
     if a < b then
         return 1.0 - lowerBeta(b, a, 1 - x)
     end

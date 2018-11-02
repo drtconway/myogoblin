@@ -1,5 +1,7 @@
 local S = require('stats')
 
+-- test cases from https://www.itl.nist.gov/div898/handbook/eda/section3/eda3674.htm
+
 local upper = {
     {2.706, 3.841, 5.024, 6.635, 10.828},
     {4.605, 5.991, 7.378, 9.210, 13.816},
